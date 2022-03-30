@@ -11,8 +11,7 @@ type User struct {
 	DeletedAt *time.Time `json:"-"`
 	Username  string     `json:"username"`
 	Salle     float32    `json:"salle"`
-	SessionID int        `json:"session_id"`
-	Session   Session    `json:"session,omitempty"`
+	SessionID int        `json:"-"`
 }
 
 type Session struct {
@@ -22,4 +21,5 @@ type Session struct {
 	DeletedAt *time.Time `json:"-"`
 	Name      string     `json:"name"`
 	Reveal    bool       `json:"reveal"`
+	Users     []User     `json:"users"`
 }
