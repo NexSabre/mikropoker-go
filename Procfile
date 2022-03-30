@@ -1,1 +1,1 @@
-web: ./mikropoker-go -e development
+web: bin/mikropoker-go -e development
