@@ -20,6 +20,6 @@ type Session struct {
 	UpdatedAt time.Time  `json:"-"`
 	DeletedAt *time.Time `json:"-"`
 	Name      string     `json:"name"`
-	Reveal    bool       `json:"reveall"`
+	Reveal    bool       `json:"reveal"`
 	Users     []User     `json:"users"`
 }

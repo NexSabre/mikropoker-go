@@ -28,18 +28,6 @@ func Start(db *gorm.DB) {
 		ctx.JSON(http.StatusOK, quieres.GetSessions(db))
 	})
 
-	// - reveal points
-	r.PATCH("/s/:session_id", func(ctx *gin.Context) {
-		session_reveal := &schema.SessionReveal{}
-		session_id := ctx.Param(SESSION_ID)
-
-		if err := ctx.Bind(&session_reveal); err != nil {
-			ctx.AbortWithError(http.StatusBadRequest, err)
-		}
-		sessionStatus := quieres.RevealSession(db, Atoi(session_id), session_reveal.Reveal)
-		ctx.JSON(http.StatusOK, sessionStatus)
-	})
-
 	// - create session
 	r.POST("/s", func(ctx *gin.Context) {
 		session_create := schema.SessionCreate{}
@@ -66,7 +54,19 @@ func Start(db *gorm.DB) {
 		ctx.JSON(http.StatusNoContent, gin.H{})
 	})
 
-	// USERS
+	// - reveal points
+	r.PATCH("/s/:session_id", func(ctx *gin.Context) {
+		sessionReveal := &schema.SessionReveal{}
+		sessionId := ctx.Param(SESSION_ID)
+
+		fmt.Printf("%+v", sessionReveal)
+		if err := ctx.Bind(&sessionReveal); err != nil {
+			ctx.AbortWithError(http.StatusBadRequest, err)
+		}
+		sessionStatus := quieres.RevealSession(db, Atoi(sessionId), sessionReveal.Reveal)
+		ctx.JSON(http.StatusOK, sessionStatus)
+	})
+
 	r.POST("/s/:session_id", func(ctx *gin.Context) {
 		session_id := ctx.Param(SESSION_ID)
 		points_add := schema.UserPoints{}

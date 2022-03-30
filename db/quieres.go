@@ -34,12 +34,10 @@ func CreateSession(db *gorm.DB, session_body schema.SessionCreate) models.Sessio
 }
 
 func RevealSession(db *gorm.DB, sessionID int, reveal bool) models.Session {
-	sessionStatus := models.Session{
-		Reveal: reveal,
-	}
-	db.Model(&sessionStatus).Where("id = ?", sessionID).Updates(sessionStatus)
+	sessionStatus := &models.Session{}
+	db.Model(&models.Session{}).Where("id = ?", sessionID).Update("reveal", reveal)
 	db.Find(&sessionStatus, sessionID)
-	return sessionStatus
+	return *sessionStatus
 }
 
 func UserPoints(db *gorm.DB, session_id int, user_body schema.UserPoints) models.User {
