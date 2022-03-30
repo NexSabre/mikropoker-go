@@ -60,3 +60,7 @@ func UserPoints(db *gorm.DB, session_id int, user_body schema.UserPoints) models
 	db.Last(&userPoints)
 	return userPoints
 }
+
+func RestartSession(db *gorm.DB, sessionID int) {
+	db.Where("session_id = ?", sessionID).Delete(&models.User{})
+}

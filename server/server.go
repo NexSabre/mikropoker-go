@@ -6,6 +6,7 @@ import (
 
 	"net/http"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	quieres "github.com/nexsabre/mikropoker-go/db"
 	"github.com/nexsabre/mikropoker-go/schema"
@@ -14,14 +15,17 @@ import (
 
 const SESSION_ID = "session_id"
 const SESSION = "session"
-const USER = "user"
+
+// const SESSIONS = "sessions "
+// const USER = "user"
 
 func Start(db *gorm.DB) {
 	r := gin.Default()
+	r.Use(cors.Default())
 
 	// SESSIONS
 	r.GET("/s", func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, gin.H{"sessions": quieres.GetSessions(db)})
+		ctx.JSON(http.StatusOK, quieres.GetSessions(db))
 	})
 
 	// - reveal points
@@ -33,7 +37,7 @@ func Start(db *gorm.DB) {
 			ctx.AbortWithError(http.StatusBadRequest, err)
 		}
 		sessionStatus := quieres.RevealSession(db, Atoi(session_id), session_reveal.Reveal)
-		ctx.JSON(http.StatusOK, gin.H{SESSION: sessionStatus})
+		ctx.JSON(http.StatusOK, sessionStatus)
 	})
 
 	// - create session
@@ -46,16 +50,24 @@ func Start(db *gorm.DB) {
 		}
 		newSession := quieres.CreateSession(db, session_create)
 
-		ctx.JSON(http.StatusCreated, gin.H{SESSION: newSession})
+		ctx.JSON(http.StatusCreated, newSession)
 	})
 
 	r.GET("/s/:session_id", func(ctx *gin.Context) {
 		session_id := ctx.Param(SESSION_ID)
-		ctx.JSON(http.StatusOK, gin.H{SESSION: quieres.GetSession(db, Atoi(session_id))})
+		ctx.JSON(http.StatusOK, quieres.GetSession(db, Atoi(session_id)))
+	})
+
+	// - restart session
+	r.DELETE("/s/:session_id", func(ctx *gin.Context) {
+		sessionID := ctx.Param(SESSION_ID)
+
+		quieres.RestartSession(db, Atoi(sessionID))
+		ctx.JSON(http.StatusNoContent, gin.H{})
 	})
 
 	// USERS
-	r.POST("/u/:session_id", func(ctx *gin.Context) {
+	r.POST("/s/:session_id", func(ctx *gin.Context) {
 		session_id := ctx.Param(SESSION_ID)
 		points_add := schema.UserPoints{}
 
@@ -65,7 +77,7 @@ func Start(db *gorm.DB) {
 		}
 
 		userPoints := quieres.UserPoints(db, Atoi(session_id), points_add)
-		ctx.JSON(http.StatusCreated, gin.H{USER: userPoints})
+		ctx.JSON(http.StatusCreated, userPoints)
 	})
 
 	r.Run()
