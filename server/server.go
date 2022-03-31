@@ -23,7 +23,7 @@ const SESSION = "session"
 func Start(db *gorm.DB) {
 	r := gin.Default()
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:  []string{"http://localhost:3000", "https://mikropoker.com", "http://www.mikropoker.com"},
+		AllowOrigins:  []string{"https://mikropoker.com", "http://www.mikropoker.com", "https://miko.app", "https://www.miko.app"},
 		AllowMethods:  []string{"GET", "DELETE", "POST", "PUT", "PATCH"},
 		AllowHeaders:  []string{"Origin", "Content-Type"},
 		ExposeHeaders: []string{"Content-Length"},
