@@ -3,6 +3,7 @@ package server
 import (
 	"fmt"
 	"strconv"
+	"time"
 
 	"net/http"
 
@@ -21,7 +22,13 @@ const SESSION = "session"
 
 func Start(db *gorm.DB) {
 	r := gin.Default()
-	r.Use(cors.Default())
+	r.Use(cors.New(cors.Config{
+		AllowOrigins:  []string{"http://localhost:3000", "https://mikropoker.com", "http://www.mikropoker.com"},
+		AllowMethods:  []string{"GET", "DELETE", "POST", "PUT", "PATCH"},
+		AllowHeaders:  []string{"Origin", "Content-Type"},
+		ExposeHeaders: []string{"Content-Length"},
+		MaxAge:        12 * time.Hour,
+	}))
 
 	// SESSIONS
 	r.GET("/s", func(ctx *gin.Context) {
