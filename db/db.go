@@ -2,7 +2,6 @@ package db
 
 import (
 	"os"
-	"time"
 
 	"github.com/nexsabre/mikropoker-go/models"
 	"gorm.io/driver/postgres"
@@ -18,9 +17,6 @@ func Init() {
 	if err != nil {
 		panic("failed to connect db")
 	}
-	db.SetMaxIdleConns(10)
-	db.SetMaxOpenConns(20)
-	db.SetConnMaxLifetime(time.Hour)
 
 	db.AutoMigrate(&models.Session{})
 	db.AutoMigrate(&models.User{})
