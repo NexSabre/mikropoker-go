@@ -77,11 +77,11 @@ func handleActions(action *WSAction, sessionID int) {
 	switch action.Action {
 	case "salle":
 		// payload:"NexSabre,32" (nickname, salle)
-		salle, _ := strconv.ParseFloat(payload[2], 32)
-		db.UserPointsForUser(db.GetDB(), sessionID, payload[1], float32(salle))
+		salle, _ := strconv.ParseFloat(payload[1], 32)
+		db.UserPointsForUser(db.GetDB(), sessionID, payload[0], float32(salle))
 	case "reveal":
 		// payload:"false" (reveal_or_hide)
-		reveal, _ := strconv.ParseBool(payload[1])
+		reveal, _ := strconv.ParseBool(payload[0])
 		db.RevealSession(db.GetDB(), sessionID, reveal)
 	case "restart":
 		// paylod:"" ()
@@ -94,7 +94,7 @@ func handleCmds(msg []byte, sessionID string) message {
 		wsAction := &WSAction{}
 		err := json.Unmarshal(msg, wsAction)
 		if err != nil {
-			fmt.Printf("Canno handle action '%+v'", msg)
+			fmt.Printf("Cannot handle action '%+v'", msg)
 		} else {
 			intSessionID, _ := strconv.Atoi(sessionID)
 			handleActions(wsAction, intSessionID)
