@@ -51,12 +51,24 @@ func UserPoints(db *gorm.DB, session_id int, user_body schema.UserPoints) models
 	if db.Model(&userPoints).
 		Where("username = ?", user_body.Username).
 		Updates(&userPoints).RowsAffected == 0 {
-		fmt.Println("0asdas")
 		db.Create(&userPoints)
 	}
-	fmt.Println("asdf")
 	db.Last(&userPoints)
 	return userPoints
+}
+
+func UserPointsForUser(db *gorm.DB, sessionID int, username string, salle float32) {
+	userPoints := models.User{
+		Username:  username,
+		Salle:     salle,
+		SessionID: sessionID,
+	}
+
+	if db.Model(&userPoints).
+		Where("username = ?", username).
+		Updates(&userPoints).RowsAffected == 0 {
+		db.Create(&userPoints)
+	}
 }
 
 func RestartSession(db *gorm.DB, sessionID int) {

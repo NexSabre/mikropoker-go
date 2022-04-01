@@ -22,13 +22,31 @@ const SESSION = "session"
 
 func Start(db *gorm.DB) {
 	r := gin.Default()
+
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:  	[]string{"https://mikropoker.com", "https://www.mikropoker.com", "https://mipo.app", "https://www.mipo.app"},
-		AllowMethods:  	[]string{"GET", "DELETE", "POST", "PUT", "PATCH"},
-		AllowHeaders:	[]string{"Origin", "Content-Length", "Content-Type", "User-Agent", "Referrer", "Host", "Token"},
-		ExposeHeaders: 	[]string{"Content-Length"},
-		MaxAge:        	12 * time.Hour,
+		AllowOrigins:  []string{"http://localhost:3000", "https://mikropoker.com", "https://www.mikropoker.com", "https://mipo.app", "https://www.mipo.app"},
+		AllowMethods:  []string{"GET", "DELETE", "POST", "PUT", "PATCH"},
+		AllowHeaders:  []string{"Origin", "Content-Length", "Content-Type", "User-Agent", "Referrer", "Host", "Token"},
+		ExposeHeaders: []string{"Content-Length"},
+		MaxAge:        12 * time.Hour,
 	}))
+
+	go h.run()
+
+	r.LoadHTMLFiles("index.html", "index2.html")
+	r.GET("/", func(c *gin.Context) {
+		c.HTML(200, "index.html", nil)
+	})
+
+	r.GET("/2", func(c *gin.Context) {
+		c.HTML(200, "index2.html", nil)
+	})
+
+	// websocket for session_id
+	r.GET("/ws/:room_id", func(c *gin.Context) {
+		roomId := Atoi(c.Param("room_id"))
+		serveWs(c.Writer, c.Request, strconv.Itoa(roomId))
+	})
 
 	// SESSIONS
 	r.GET("/s", func(ctx *gin.Context) {
