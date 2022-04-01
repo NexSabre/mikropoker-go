@@ -17,9 +17,6 @@ import (
 const SESSION_ID = "session_id"
 const SESSION = "session"
 
-// const SESSIONS = "sessions "
-// const USER = "user"
-
 func Start(db *gorm.DB) {
 	r := gin.Default()
 
@@ -32,15 +29,6 @@ func Start(db *gorm.DB) {
 	}))
 
 	go h.run()
-
-	r.LoadHTMLFiles("index.html", "index2.html")
-	r.GET("/", func(c *gin.Context) {
-		c.HTML(200, "index.html", nil)
-	})
-
-	r.GET("/2", func(c *gin.Context) {
-		c.HTML(200, "index2.html", nil)
-	})
 
 	// websocket for session_id
 	r.GET("/ws/:room_id", func(c *gin.Context) {
