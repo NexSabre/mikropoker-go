@@ -71,10 +71,6 @@ type WSAction struct {
 	Payload string `json:"payload"`
 }
 
-type WSActionChangeSalle struct {
-	Salle float32 `json:"salle"`
-}
-
 func handleActions(action *WSAction, sessionID int) {
 	payload := strings.Split(action.Payload, ",")
 	// TODO NexSabre clean this in UI
