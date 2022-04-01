@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -65,7 +66,45 @@ func (s subscription) readPump() {
 	}
 }
 
+type WSAction struct {
+	Action  string `json:"action"`
+	Payload string `json:"payload"`
+}
+
+type WSActionChangeSalle struct {
+	Salle float32 `json:"salle"`
+}
+
+func handleActions(action *WSAction, sessionID int) {
+	payload := strings.Split(action.Payload, ",")
+	// TODO NexSabre clean this in UI
+	switch action.Action {
+	case "salle":
+		// payload:"NexSabre,32" (nickname, salle)
+		salle, _ := strconv.ParseFloat(payload[2], 32)
+		db.UserPointsForUser(db.GetDB(), sessionID, payload[1], float32(salle))
+	case "reveal":
+		// payload:"false" (reveal_or_hide)
+		reveal, _ := strconv.ParseBool(payload[1])
+		db.RevealSession(db.GetDB(), sessionID, reveal)
+	case "restart":
+		// paylod:"" ()
+		db.RestartSession(db.GetDB(), sessionID)
+	}
+}
+
 func handleCmds(msg []byte, sessionID string) message {
+	if len(msg) > 0 {
+		wsAction := &WSAction{}
+		err := json.Unmarshal(msg, wsAction)
+		if err != nil {
+			fmt.Printf("Canno handle action '%+v'", msg)
+		} else {
+			intSessionID, _ := strconv.Atoi(sessionID)
+			handleActions(wsAction, intSessionID)
+		}
+	}
+
 	_sessionID, _ := strconv.Atoi(sessionID)
 	session := db.GetSession(db.GetDB(), _sessionID)
 	msgFromDB, err := json.Marshal(session)

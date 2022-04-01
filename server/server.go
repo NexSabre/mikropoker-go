@@ -43,9 +43,9 @@ func Start(db *gorm.DB) {
 	})
 
 	// websocket for session_id
-	r.GET("/ws/:session_id", func(c *gin.Context) {
-		sessionID := Atoi(c.Param(SESSION_ID))
-		serveWs(c.Writer, c.Request, strconv.Itoa(sessionID))
+	r.GET("/ws/:room_id", func(c *gin.Context) {
+		roomId := Atoi(c.Param("room_id"))
+		serveWs(c.Writer, c.Request, strconv.Itoa(roomId))
 	})
 
 	// SESSIONS

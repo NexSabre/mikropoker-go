@@ -34,7 +34,7 @@
           const roomId = params[params.length - 1];
           conn = new WebSocket("ws://localhost:8080/ws/1");
           conn.onopen = (event) => {
-            conn.send("asdasd");
+            conn.send("");
           };
           conn.onclose = function (evt) {
             let item = document.createElement("div");
