@@ -19,7 +19,8 @@ const SESSION = "session"
 
 func Start(db *gorm.DB) {
 	r := gin.Default()
-
+	r.Static("/assets", "./dist/assets/")
+	r.StaticFile("/", "./dist/index.html")
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:  []string{"http://localhost:3000", "https://mikropoker.com", "https://www.mikropoker.com", "https://mipo.app", "https://www.mipo.app"},
 		AllowMethods:  []string{"GET", "DELETE", "POST", "PUT", "PATCH"},
