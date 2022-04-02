@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"os"
 	"strconv"
 	"time"
 
@@ -16,6 +17,10 @@ import (
 
 const SESSION_ID = "session_id"
 const SESSION = "session"
+
+type TPORT struct {
+	port string `json:"port"`
+}
 
 func Start(db *gorm.DB) {
 	r := gin.Default()
@@ -35,6 +40,10 @@ func Start(db *gorm.DB) {
 	r.GET("/ws/:room_id", func(c *gin.Context) {
 		roomId := Atoi(c.Param("room_id"))
 		serveWs(c.Writer, c.Request, strconv.Itoa(roomId))
+	})
+
+	r.GET("/port", func(ctx *gin.Context) {
+		ctx.JSON(http.StatusOK, &TPORT{port: os.Getenv("PORT")})
 	})
 
 	// SESSIONS
