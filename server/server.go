@@ -19,7 +19,7 @@ const SESSION_ID = "session_id"
 const SESSION = "session"
 
 type TPORT struct {
-	port string `json:"port"`
+	Port string `json:"port"`
 }
 
 func Start(db *gorm.DB) {
@@ -43,7 +43,7 @@ func Start(db *gorm.DB) {
 	})
 
 	r.GET("/port", func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, &TPORT{port: os.Getenv("PORT")})
+		ctx.JSON(http.StatusOK, &TPORT{Port: os.Getenv("PORT")})
 	})
 
 	// SESSIONS
