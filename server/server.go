@@ -19,8 +19,7 @@ const SESSION = "session"
 
 func Start(db *gorm.DB) {
 	r := gin.Default()
-	r.Static("/assets", "./dist/assets/")
-	r.StaticFile("/", "./dist/index.html")
+
 	r.Use(cors.New(cors.Config{
 		AllowOrigins:  []string{"http://localhost:3000", "https://mikropoker.com", "https://www.mikropoker.com", "https://mipo.app", "https://www.mipo.app"},
 		AllowMethods:  []string{"GET", "DELETE", "POST", "PUT", "PATCH"},
@@ -28,14 +27,6 @@ func Start(db *gorm.DB) {
 		ExposeHeaders: []string{"Content-Length"},
 		MaxAge:        12 * time.Hour,
 	}))
-
-	go h.run()
-
-	// websocket for session_id
-	r.GET("/ws/:room_id", func(c *gin.Context) {
-		roomId := Atoi(c.Param("room_id"))
-		serveWs(c.Writer, c.Request, strconv.Itoa(roomId))
-	})
 
 	// SESSIONS
 	r.GET("/s", func(ctx *gin.Context) {
